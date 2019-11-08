@@ -148,16 +148,15 @@ class EmojiArtViewController: UIViewController, UIDropInteractionDelegate, UIScr
         session.localContext = collectionView
         return dragItems(at: indexPath)
     }
-    
+                     
     // Determines which items to drag.
-    func dragItems(at indexPath: IndexPath) -> [UIDragItem] {
+    private func dragItems(at indexPath: IndexPath) -> [UIDragItem] {
         // Here we are dragging NSAttributedString but maybe change this to generics to work with images.
          // Look at index path, find custom cell, look at its outlet and get its attributed text.
         guard !addingEmoji else { return [] }
         if let emojiCollectionViewCell = emojiCollectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell,
-            let attributedString = emojiCollectionViewCell.label?.attributedText
-            
-        {   let dragItem = UIDragItem(itemProvider: NSItemProvider(object: attributedString))
+            let attributedString = emojiCollectionViewCell.label?.attributedText {
+             let dragItem = UIDragItem(itemProvider: NSItemProvider(object: attributedString))
             // IF drag is local (within the app)
             dragItem.localObject = attributedString
             return [dragItem]
@@ -170,8 +169,7 @@ class EmojiArtViewController: UIViewController, UIDropInteractionDelegate, UIScr
         return session.canLoadObjects(ofClass: NSAttributedString.self)
     }
     
-    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal
-    {
+    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
         if let indexPath = destinationIndexPath, indexPath.section == 1 {
             let isSelf = (session.localDragSession?.localContext as? UICollectionView) == collectionView
             return UICollectionViewDropProposal(operation: isSelf ? .move: .copy, intent: .insertAtDestinationIndexPath)
@@ -180,8 +178,8 @@ class EmojiArtViewController: UIViewController, UIDropInteractionDelegate, UIScr
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator)
-    {
+    
+    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
         let destinationIndexPath = coordinator.destinationIndexPath ?? IndexPath(item: 0, section: 0)
         for item in coordinator.items {
             if let sourceIndexPath = item.sourceIndexPath {
@@ -195,6 +193,7 @@ class EmojiArtViewController: UIViewController, UIDropInteractionDelegate, UIScr
                 coordinator.drop(item.dragItem, toItemAt: destinationIndexPath)
             } else {
                 // no sourceIndexPath, so not local
+                // tell the coordinator to drop an item to the placeholder.
                 let placeholderContext = coordinator.drop(
                     item.dragItem,
                     to: UICollectionViewDropPlaceholder(insertionIndexPath: destinationIndexPath, reuseIdentifier: "DropPlaceHolderCell")
@@ -258,3 +257,4 @@ class EmojiArtViewController: UIViewController, UIDropInteractionDelegate, UIScr
     }
 
 }
+
